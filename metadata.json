@@ -1,0 +1,5 @@
+{
+  "name": "Lào Cai MedFlow",
+  "description": "A comprehensive medical scheduling application for Traditional Medicine (YHCT), featuring conflict detection, timeline views, and workflow management.",
+  "requestFramePermissions": []
+}

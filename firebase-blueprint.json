@@ -1,0 +1,192 @@
+{
+  "entities": {
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "User account information",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "fullName": { "type": "string" },
+        "role": { "type": "string", "enum": ["ADMIN", "STAFF"] },
+        "viewableDeptIds": { "type": "array", "items": { "type": "string" } },
+        "editableDeptIds": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["username", "password", "fullName", "role", "viewableDeptIds", "editableDeptIds"]
+    },
+    "Staff": {
+      "title": "Staff",
+      "description": "Staff member information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["Doctor", "Technician", "Nurse", "PhysicianAssistant", "Pharmacist"] },
+        "deptId": { "type": "string" },
+        "avatar": { "type": "string" },
+        "capabilityIds": { "type": "array", "items": { "type": "string" } },
+        "mainCapabilityIds": { "type": "array", "items": { "type": "string" } },
+        "assistantCapabilityIds": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "role", "deptId", "capabilityIds", "mainCapabilityIds", "assistantCapabilityIds"]
+    },
+    "AttendanceRecord": {
+      "title": "AttendanceRecord",
+      "description": "Staff attendance record",
+      "type": "object",
+      "properties": {
+        "staffId": { "type": "string" },
+        "date": { "type": "string" },
+        "status": { "type": "string", "enum": ["PRESENT", "OFF_FULL", "OFF_MORNING", "OFF_AFTERNOON"] }
+      },
+      "required": ["staffId", "date", "status"]
+    },
+    "PatientReferral": {
+      "title": "PatientReferral",
+      "description": "Patient referral to another department",
+      "type": "object",
+      "properties": {
+        "specialty": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "fromDeptId": { "type": "string" },
+        "referralDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIVE", "FINISHED"] },
+        "finishedDate": { "type": "string" },
+        "finishedTime": { "type": "string" },
+        "procedureIds": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["specialty", "timestamp", "fromDeptId", "referralDate"]
+    },
+    "Patient": {
+      "title": "Patient",
+      "description": "Patient information",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "dob": { "type": "string" },
+        "gender": { "type": "string", "enum": ["Nam", "Nữ"] },
+        "code": { "type": "string" },
+        "bedNumber": { "type": "string" },
+        "roomNumber": { "type": "string" },
+        "admissionDate": { "type": "string" },
+        "dischargeDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["TREATING", "DISCHARGED"] },
+        "admittedByDeptId": { "type": "string" },
+        "referrals": { "type": "array", "items": { "$ref": "#/entities/PatientReferral" } }
+      },
+      "required": ["name", "dob", "gender", "code", "bedNumber", "admissionDate", "status", "admittedByDeptId"]
+    },
+    "Procedure": {
+      "title": "Procedure",
+      "description": "Medical procedure definition",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "durationMinutes": { "type": "number" },
+        "mainBusyStart": { "type": "number" },
+        "mainBusyEnd": { "type": "number" },
+        "asst1BusyStart": { "type": "number" },
+        "asst1BusyEnd": { "type": "number" },
+        "asst2BusyStart": { "type": "number" },
+        "asst2BusyEnd": { "type": "number" },
+        "busyMinutes": { "type": "number" },
+        "assistant1BusyMinutes": { "type": "number" },
+        "assistant2BusyMinutes": { "type": "number" },
+        "restMinutes": { "type": "number" },
+        "deptId": { "type": "string" },
+        "requireMachine": { "type": "boolean" },
+        "machineCapacity": { "type": "number" },
+        "availableMachines": { "type": "array", "items": { "type": "string" } },
+        "isPreRequisite": { "type": "boolean" },
+        "isPostRequisite": { "type": "boolean" },
+        "isIndependent": { "type": "boolean" },
+        "icon": { "type": "string" },
+        "iconColor": { "type": "string" }
+      },
+      "required": ["name", "durationMinutes"]
+    },
+    "ConflictDetail": {
+      "title": "ConflictDetail",
+      "description": "Details of a scheduling conflict",
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "level": { "type": "number", "enum": [1, 2, 3] }
+      },
+      "required": ["message", "level"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Scheduled appointment",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string" },
+        "staffId": { "type": "string" },
+        "assistant1Id": { "type": "string" },
+        "assistant2Id": { "type": "string" },
+        "procedureId": { "type": "string" },
+        "deptId": { "type": "string" },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING", "IN_PROGRESS", "COMPLETED", "CONFLICT"] },
+        "notes": { "type": "string" },
+        "assignedMachineId": { "type": "string" },
+        "overlapLevel": { "type": "number" },
+        "conflictDetails": { "type": "array", "items": { "$ref": "#/entities/ConflictDetail" } },
+        "mainBusyStart": { "type": "number" },
+        "mainBusyEnd": { "type": "number" },
+        "asst1BusyStart": { "type": "number" },
+        "asst1BusyEnd": { "type": "number" },
+        "asst2BusyStart": { "type": "number" },
+        "asst2BusyEnd": { "type": "number" },
+        "restMinutes": { "type": "number" }
+      },
+      "required": ["patientId", "staffId", "procedureId", "deptId", "date", "startTime", "endTime", "status"]
+    },
+    "Backup": {
+      "title": "Backup",
+      "description": "Data backup for a department",
+      "type": "object",
+      "properties": {
+        "deptId": { "type": "string" },
+        "backupDate": { "type": "string" },
+        "versionName": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "snapshot": { "type": "string" },
+        "note": { "type": "string" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["deptId", "backupDate", "versionName", "createdAt", "snapshot", "createdBy"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "User accounts"
+    },
+    "staff/{staffId}": {
+      "schema": { "$ref": "#/entities/Staff" },
+      "description": "Staff members"
+    },
+    "attendance/{attendanceId}": {
+      "schema": { "$ref": "#/entities/AttendanceRecord" },
+      "description": "Staff attendance records"
+    },
+    "patients/{patientId}": {
+      "schema": { "$ref": "#/entities/Patient" },
+      "description": "Patients"
+    },
+    "procedures/{procedureId}": {
+      "schema": { "$ref": "#/entities/Procedure" },
+      "description": "Medical procedures"
+    },
+    "appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/Appointment" },
+      "description": "Appointments"
+    },
+    "backups/{backupId}": {
+      "schema": { "$ref": "#/entities/Backup" },
+      "description": "Data backups"
+    }
+  }
+}
